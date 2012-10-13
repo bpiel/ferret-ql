@@ -5,6 +5,52 @@
 
  (defmacro fact-skip [& r] `())
 
+
+(fact
+"Test transmogrify-value scalar"
+(query-engine/transmogrify-value
+  1
+  #(+ % 1))
+=>  {:__trans-type :scalar, :__trans-value 2})
+
+(fact
+"Test transmogrify-value map"
+(query-engine/transmogrify-value
+  {1 10 3 15}
+  #(+ % 1))
+=> 
+  {:__trans-type :map, 
+   :__trans-value '(
+    [{:__trans-type :scalar, :__trans-value 2} {:__trans-type :scalar, :__trans-value 11}] 
+    [{:__trans-type :scalar, :__trans-value 4} {:__trans-type :scalar, :__trans-value 16}])})
+
+(fact
+"Test transmogrify-value vector"
+(query-engine/transmogrify-value
+  [1 10 3 15]
+  #(+ % 1)
+  )
+=> 
+  {:__trans-type :sequential, 
+   :__trans-value '(
+    {:__trans-type :scalar, :__trans-value 2} 
+    {:__trans-type :scalar, :__trans-value 11} 
+    {:__trans-type :scalar, :__trans-value 4} 
+    {:__trans-type :scalar, :__trans-value 16})})
+
+
+(fact
+"Test transmogrify-value map -- returns vector"
+(query-engine/transmogrify-value
+  {1 10 3 15}
+  #(vector % (+ % 1)))
+=> 
+  {:__trans-type :map, 
+   :__trans-value '(
+    [{:__trans-type :scalar, :__trans-value [1 2]} {:__trans-type :scalar, :__trans-value [10 11]}] 
+    [{:__trans-type :scalar, :__trans-value [3 4]} {:__trans-type :scalar, :__trans-value [15 16]}])})
+
+
   (fact-skip
   "Test recursive object traversal"
   (query-engine/traverse-object 
@@ -234,7 +280,7 @@
  
  
 
-(fact
+(fact-skip
     "***test-query -- Test confusing idea #1"
     (query-engine/test-query
     { "select"  {"{x.prop1}" "{x.prop2}"}
@@ -282,7 +328,7 @@
         "aggregate" 44}])
 
   
-  (fact
+  (fact-skip
   "test-query -- Test selects single property from object"
   (query-engine/test-query
     {
@@ -296,7 +342,7 @@
   => [11 33])
 
   
-  (fact
+  (fact-skip
   "test-query -- Test selects single property from object - aggregated group w/o function?"
   (query-engine/test-query
     {
@@ -309,7 +355,7 @@
      {"prop1" 33, "prop2" 444}])
   => [11])
 
-  (fact
+  (fact-skip
   "test-query -- Test selects single property from object - grouped"
   (query-engine/test-query
     {

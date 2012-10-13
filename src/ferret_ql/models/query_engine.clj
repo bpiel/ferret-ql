@@ -46,14 +46,17 @@
           %)
       pairs)))
 
-(defn traverse-object [object func]
-  (if (map? object)
-    (pairs-to-map (map #(traverse-object % func) object))
-    (if (vector? object)
-      (map #(traverse-object % func) object)
-      (func object))))
+(defn transmogrify-value [value func]
+  {:__trans-type 
+    (if (map? value) :map
+      (if (sequential? value) :sequential
+        :scalar))
+   :__trans-value
+     (if (map? value) (map #(vector (transmogrify-value (first %) func) (transmogrify-value (second %) func)) value)
+        (if (sequential? value) (map #(transmogrify-value % func) value)
+          (func value)))})
 
-(defn traverse-object-OLD [object func]
+(defn traverse-object [object func]
   (if (map? object)
     (pairs-to-map (map #(traverse-object % func) object))
     (if (vector? object)
