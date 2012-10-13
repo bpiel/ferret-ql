@@ -34,8 +34,18 @@
           first-coll
           (predicate first-coll))))))
 
-(defn-dbg pairs-to-map [pairs]
+(defn pairs-to-map-OLD [pairs]
   (apply hash-map (mapcat identity pairs)))
+
+(defn pairs-to-map [pairs]
+  (apply 
+    hash-map 
+    (mapcat 
+      #(if (sequential? (first %))
+          (interleave (first %) (second %)) ;make recursive?
+          %)
+      pairs)))
+
 
 (defn traverse-object [object func]
   (if (map? object)
