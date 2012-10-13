@@ -1,2 +1,2 @@
-ferretql
+ferret-ql
 ========
