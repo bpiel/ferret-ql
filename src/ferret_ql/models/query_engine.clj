@@ -46,13 +46,20 @@
           %)
       pairs)))
 
-
 (defn traverse-object [object func]
   (if (map? object)
     (pairs-to-map (map #(traverse-object % func) object))
     (if (vector? object)
       (map #(traverse-object % func) object)
       (func object))))
+
+(defn traverse-object-OLD [object func]
+  (if (map? object)
+    (pairs-to-map (map #(traverse-object % func) object))
+    (if (vector? object)
+      (map #(traverse-object % func) object)
+      (func object))))
+
 
 
 (def expression-parser

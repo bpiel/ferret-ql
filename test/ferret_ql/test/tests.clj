@@ -5,7 +5,7 @@
 
  (defmacro fact-skip [& r] `())
 
-  (fact
+  (fact-skip
   "Test recursive object traversal"
   (query-engine/traverse-object 
     { 1 2
@@ -16,12 +16,13 @@
       4 {5 6}
       7 [8 9 [10 2 {3 4}]]})
 
-  (fact
+  (fact-skip
   "Test object traversal with key pairs"
   (query-engine/traverse-object 
     {1 10}
     #(vector % (+ % 1)))
 => {1 10, 2 11})
+
 
 
   (fact-skip
@@ -281,7 +282,7 @@
         "aggregate" 44}])
 
   
-  (fact-skip
+  (fact
   "test-query -- Test selects single property from object"
   (query-engine/test-query
     {
@@ -295,7 +296,7 @@
   => [11 33])
 
   
-  (fact-skip
+  (fact
   "test-query -- Test selects single property from object - aggregated group w/o function?"
   (query-engine/test-query
     {
@@ -308,7 +309,7 @@
      {"prop1" 33, "prop2" 444}])
   => [11])
 
-  (fact-skip
+  (fact
   "test-query -- Test selects single property from object - grouped"
   (query-engine/test-query
     {
