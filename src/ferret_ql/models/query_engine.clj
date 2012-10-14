@@ -46,6 +46,7 @@
           %)
       pairs)))
 
+(defn if-seq)
 
 (defn transmogrify-value [value func]
   {:__trans-type 
@@ -62,24 +63,19 @@
 ;write a function that takes a "value", traverses it looking for mogrified maps, and rebuilds them using pairs-to-map/flatten/first/etc
 ; starting from the bottom up
 
-(defn standard-demogrifier [type value]  
+(defn demogrify-value [mogrified]
+  (let [type (:__trans-type mogrified)
+        value (:__trans-value mogrified)]
     (case type
-      :map (pairs-to-map value)
-      :sequential value
-      :scalar (if (sequential? value)
-                (first value)
-                value)))
+      :scalar 
+        (if (sequential? value)
+          (first value)
+          value)
+      :sequential (flatten (map :__trans-value value)) ;this may be too deep and wrong
+      :map (pairs-to-map (map #(vector (:__trans-value (first %)) (:__trans-value (second %))) value))
+      )))
 
-(defn demogrify-value [value func]
-  (cond
-    (:__trans-type value)
-      (func (:__trans-type value) (demogrify-value (:__trans-value value) func))
-    (map? value)
-      (pairs-to-map (map #(demogrify-value % func) value))
-    (sequential? value)
-      (map #(demogrify-value % func) value)
-    :else 
-      value))
+
 
 
 (defn traverse-object [object func]

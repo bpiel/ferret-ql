@@ -16,8 +16,7 @@
 (fact
 "Test demogrify-value scalar"
 (query-engine/demogrify-value
-  {:__trans-type :scalar, :__trans-value 2}
-  query-engine/standard-demogrifier)
+  {:__trans-type :scalar, :__trans-value 2})
 =>  2)
 
 (fact
@@ -37,8 +36,7 @@
   {:__trans-type :map, 
    :__trans-value '(
     [{:__trans-type :scalar, :__trans-value 2} {:__trans-type :scalar, :__trans-value 11}] 
-    [{:__trans-type :scalar, :__trans-value 4} {:__trans-type :scalar, :__trans-value 16}])}
-  query-engine/standard-demogrifier)
+    [{:__trans-type :scalar, :__trans-value 4} {:__trans-type :scalar, :__trans-value 16}])})
 => 
   {2 11 4 16})
 
@@ -59,8 +57,7 @@
 
 (fact
 "Test demogrify-value vector"
-(query-engine/demogrify-value
-  
+(query-engine/demogrify-value  
   {:__trans-type :sequential, 
    :__trans-value '(
     {:__trans-type :scalar, :__trans-value 2} 
@@ -68,7 +65,7 @@
     {:__trans-type :scalar, :__trans-value 4} 
     {:__trans-type :scalar, :__trans-value 16})}
 
-  query-engine/standard-demogrifier)
+  )
 => 
   [2 11 4 16])
 
@@ -84,8 +81,7 @@
 (fact
 "Test demogrify-value scalar -- inputs are vectors"
 (query-engine/demogrify-value
-  {:__trans-type :scalar, :__trans-value [2 3]}
-  query-engine/standard-demogrifier)
+  {:__trans-type :scalar, :__trans-value [2 3]})
 => 
   2)
 
@@ -107,8 +103,7 @@
   {:__trans-type :map, 
    :__trans-value '(
     [{:__trans-type :scalar, :__trans-value [1 2]} {:__trans-type :scalar, :__trans-value [10 11]}] 
-    [{:__trans-type :scalar, :__trans-value [3 4]} {:__trans-type :scalar, :__trans-value [15 16]}])}
-  query-engine/standard-demogrifier)
+    [{:__trans-type :scalar, :__trans-value [3 4]} {:__trans-type :scalar, :__trans-value [15 16]}])})
 => 
   {1 10, 2 11, 3 15, 4 16})
 
@@ -133,12 +128,9 @@
     {:__trans-type :scalar, :__trans-value [1 2]} 
     {:__trans-type :scalar, :__trans-value [10 11]} 
     {:__trans-type :scalar, :__trans-value [3 4]} 
-    {:__trans-type :scalar, :__trans-value [15 16]})}
-  query-engine/standard-demogrifier)
+    {:__trans-type :scalar, :__trans-value [15 16]})})
 => 
-  [1 10 2 11 3 15 4 16])
-
-
+  [1 2 10 11 3 4 15 16])
 
 
 (fact
@@ -167,7 +159,7 @@
 
 
 
-  (fact-skip
+  (fact
   "Test recursive object traversal"
   (query-engine/traverse-object 
     { 1 2
@@ -178,7 +170,7 @@
       4 {5 6}
       7 [8 9 [10 2 {3 4}]]})
 
-  (fact-skip
+  (fact
   "Test object traversal with key pairs"
   (query-engine/traverse-object 
     {1 10}
@@ -187,7 +179,7 @@
 
 
 
-  (fact-skip
+  (fact
     "Test parsley expression parser"
     (query-engine/parse-expr-into-parsley-Node "{x}")
     =>  #net.cgrand.parsley.Node{
@@ -203,13 +195,13 @@
     )
 
 
-(fact-skip
+(fact
   "Test single-variable expression grammer parser"
   (query-engine/parse-expr "{test.aa}")
   => {:type :var
       :path ["test" "aa"]})
 
-(fact-skip
+(fact
   "Test single-function expression grammer parser"
   (query-engine/parse-expr "(count {test.aa})")
   => {:type :func-call
@@ -217,7 +209,7 @@
       :args [{:type :var
               :path ["test" "aa"]}]})
 
-(fact-skip
+(fact
   "Test nested function expression grammer parser"
   (query-engine/parse-expr "(count {test.aa} {x.y.z} (+ {a}))")
   => {:type :func-call
@@ -233,7 +225,7 @@
 
 
 
-(fact-skip
+(fact
   "Test find-first-and-rest"
   (query-engine/find-first-and-rest even? [1 3 4 1 2 3])
   => [4 [1 2 3]])
@@ -241,7 +233,7 @@
 
   
 
-(fact-skip
+(fact
   "Test expression grammer parser on nested function expression"
   (query-engine/parse-expr "(+ (count {test.aa.bb}) {test2})")
   => {:type :func-call
@@ -254,13 +246,13 @@
                :path ["test2"]}]}
   )
 
-(fact-skip
+(fact
   "Test expression grammer parser non-expression"
   (query-engine/parse-expr "test 4")
   => "test 4")
 
 
-  (fact-skip
+  (fact
     "Test simple eval-expr-var"
     (query-engine/eval-expr-var 
       {:type :var
@@ -272,7 +264,7 @@
     
     => `(1 3 7))
 
-  (fact-skip
+  (fact
     "Test simple eval-expr-var-single-context"
     (query-engine/eval-expr-var-single-context
       ["x" "a"]      
@@ -285,13 +277,13 @@
   
 
 
-  (fact-skip
+  (fact
     "Test simple eval expression"
     (query-engine/eval-expr "{obj.prop1}" [{"obj" { "prop0" 10 "prop1" "42"}}])
     => ["42"]
   )
 
-  (fact-skip
+  (fact
     "Test static expression"
     (query-engine/eval-expr "stuff" [{"obj" { "prop0" 10 "prop1" 42}}])
     => "stuff"
@@ -299,7 +291,7 @@
 
 (comment
 
-  (fact-skip
+  (fact
     "Test compound eval expression"
     (query-engine/eval-expr "$obj.prop1 is $obj.prop0.abc" [{"obj" { "prop0" {"abc" "ok"} "prop1" "42"}}])
     => "42 is ok"
@@ -308,7 +300,7 @@
 )
 
 
-  (fact-skip
+  (fact
   "Test get-for-contexts"
   (query-engine/get-for-contexts {"for" "x" "in" "_"} {"_" [{:a 1} {:a 3} {:a 7}]})
 => [
@@ -319,7 +311,7 @@
 
 
 
-(fact-skip
+(fact
   "Test group-contexts"
   (query-engine/group-contexts
     {"for" "x" "in" "_" "group" "{_index_}"} 
@@ -339,7 +331,7 @@
 
 (comment
 
-  (fact-skip
+  (fact
   "Test complex select object context evaluation"
   (query-engine/eval-select-value
      {
@@ -366,7 +358,7 @@
 
 )
 
-  (fact-skip
+  (fact
   "Test simple select object context evaluation"
   (query-engine/eval-select-value
      "{x.prop1}"
@@ -381,7 +373,7 @@
 => ["42"]
 )
  
-  (fact-skip
+  (fact
   "Test simple select object multi group context evaluation"
   (query-engine/eval-select-value
      "{x.prop1}"
@@ -396,7 +388,7 @@
  
  
 
-(fact-skip
+(fact
     "***test-query -- Test confusing idea #1"
     (query-engine/test-query
     { "select"  {"{x.prop1}" "{x.prop2}"}
@@ -410,7 +402,7 @@
   => [{"k11" "v222"
        "k33" "v444"}])
 
-  (fact-skip
+  (fact
     "test-query -- Test confusing idea #2"
     (query-engine/test-query
     { "select"  {"aa" ["{x.prop1}" "{x.prop2}"]}
@@ -424,7 +416,7 @@
   => [{ "aa" ["11" "222" "33" "444"]}])
 
 
-  (fact-skip
+  (fact
     "test-query -- Test confusing ideas together"
     (query-engine/test-query
     { "select"  {"array"      ["{x.prop1}" "{x.prop2}"]
@@ -444,7 +436,7 @@
         "aggregate" 44}])
 
   
-  (fact-skip
+  (fact
   "test-query -- Test selects single property from object"
   (query-engine/test-query
     {
@@ -458,7 +450,7 @@
   => [11 33])
 
   
-  (fact-skip
+  (fact
   "test-query -- Test selects single property from object - aggregated group w/o function?"
   (query-engine/test-query
     {
@@ -471,7 +463,7 @@
      {"prop1" 33, "prop2" 444}])
   => [11])
 
-  (fact-skip
+  (fact
   "test-query -- Test selects single property from object - grouped"
   (query-engine/test-query
     {
@@ -485,7 +477,7 @@
   => [[11 33]])
 
 
-  (fact-skip
+  (fact
   "test-query -- Test selects multiple properties from nested objects in array"
   (query-engine/test-query
     { "select"  { "key" "{x.prop1}", "{x.prop2.key1}" "{x.prop2.prop3}" }
@@ -503,7 +495,7 @@
 
 (comment
   
-  (fact-skip
+  (fact
   "Test count aggregate function"
   (query-engine/test-query
     { "select"  "(count $x)"
@@ -519,7 +511,7 @@
 
 
 
-(fact-skip
+(fact
   "Test selects simple property correctly"
   (query-engine/test-query
     {"select" "{prop1}"}
