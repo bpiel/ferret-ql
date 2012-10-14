@@ -83,7 +83,7 @@
 (query-engine/demogrify-value
   {:__trans-type :scalar, :__trans-value [2 3]})
 => 
-  2)
+  [2 3])
 
 
 (fact
@@ -130,7 +130,7 @@
     {:__trans-type :scalar, :__trans-value [3 4]} 
     {:__trans-type :scalar, :__trans-value [15 16]})})
 => 
-  [1 2 10 11 3 4 15 16])
+  [[1 10 3 15] [2 11 4 16]])
 
 
 (fact
@@ -156,6 +156,28 @@
       {:__trans-type :scalar, :__trans-value [1 {2 3}]} 
       {:__trans-type :scalar, :__trans-value [22 {23 24}]} 
       {:__trans-type :scalar, :__trans-value [333 {334 335}]})}])})
+
+(fact
+"Test transmogrify and demogrify scalar -- with vectorizing"
+(query-engine/demogrify-value 
+  (query-engine/transmogrify-value
+  2
+  #(vector (+ % 1) %)))
+=> 
+  [3 2])
+
+(fact
+"Test transmogrify and demogrify nested -- with vectorizing"
+(query-engine/demogrify-value 
+  (query-engine/transmogrify-value
+  {1 10 3 [1 22 333]}
+  #(vector (+ % 1) %)))
+=> 
+  {2 11
+   1 10   
+   4 [2 23 334]
+   3 [1 22 333]})
+
 
 
 
