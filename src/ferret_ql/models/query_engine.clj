@@ -46,6 +46,7 @@
           %)
       pairs)))
 
+
 (defn transmogrify-value [value func]
   {:__trans-type 
     (cond 
@@ -65,7 +66,9 @@
     (case type
       :map (pairs-to-map value)
       :sequential value
-      :scalar value))
+      :scalar (if (sequential? value)
+                (first value)
+                value)))
 
 (defn demogrify-value [value func]
   (cond

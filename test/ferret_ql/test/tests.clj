@@ -73,6 +73,21 @@
   [2 11 4 16])
 
 
+(fact
+"Test transmogrify-value scalar -- returns vector"
+(query-engine/transmogrify-value
+  2
+  #(vector % (+ % 1)))
+=> 
+  {:__trans-type :scalar, :__trans-value [2 3]})
+
+(fact
+"Test demogrify-value scalar -- inputs are vectors"
+(query-engine/demogrify-value
+  {:__trans-type :scalar, :__trans-value [2 3]}
+  query-engine/standard-demogrifier)
+=> 
+  2)
 
 
 (fact
@@ -85,6 +100,45 @@
    :__trans-value '(
     [{:__trans-type :scalar, :__trans-value [1 2]} {:__trans-type :scalar, :__trans-value [10 11]}] 
     [{:__trans-type :scalar, :__trans-value [3 4]} {:__trans-type :scalar, :__trans-value [15 16]}])})
+
+(fact
+"Test demogrify-value map -- inputs are vectors"
+(query-engine/demogrify-value
+  {:__trans-type :map, 
+   :__trans-value '(
+    [{:__trans-type :scalar, :__trans-value [1 2]} {:__trans-type :scalar, :__trans-value [10 11]}] 
+    [{:__trans-type :scalar, :__trans-value [3 4]} {:__trans-type :scalar, :__trans-value [15 16]}])}
+  query-engine/standard-demogrifier)
+=> 
+  {1 10, 2 11, 3 15, 4 16})
+
+(fact
+"Test transmogrify-value vector -- returns vector"
+(query-engine/transmogrify-value
+  [1 10 3 15]
+  #(vector % (+ % 1)))
+=> 
+  {:__trans-type :sequential, 
+   :__trans-value '(
+    {:__trans-type :scalar, :__trans-value [1 2]} 
+    {:__trans-type :scalar, :__trans-value [10 11]} 
+    {:__trans-type :scalar, :__trans-value [3 4]} 
+    {:__trans-type :scalar, :__trans-value [15 16]})})
+
+(fact
+"Test demogrify-value vector -- inputs are vectors"
+(query-engine/demogrify-value
+  {:__trans-type :sequential, 
+   :__trans-value '(
+    {:__trans-type :scalar, :__trans-value [1 2]} 
+    {:__trans-type :scalar, :__trans-value [10 11]} 
+    {:__trans-type :scalar, :__trans-value [3 4]} 
+    {:__trans-type :scalar, :__trans-value [15 16]})}
+  query-engine/standard-demogrifier)
+=> 
+  [1 10 2 11 3 15 4 16])
+
+
 
 
 (fact
