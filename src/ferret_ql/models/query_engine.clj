@@ -48,13 +48,36 @@
 
 (defn transmogrify-value [value func]
   {:__trans-type 
-    (if (map? value) :map
-      (if (sequential? value) :sequential
-        :scalar))
+    (cond 
+      (map? value) :map
+      (sequential? value) :sequential
+      :else :scalar)
    :__trans-value
-     (if (map? value) (map #(vector (transmogrify-value (first %) func) (transmogrify-value (second %) func)) value)
-        (if (sequential? value) (map #(transmogrify-value % func) value)
-          (func value)))})
+     (cond 
+        (map? value) (map #(vector (transmogrify-value (first %) func) (transmogrify-value (second %) func)) value)
+        (sequential? value) (map #(transmogrify-value % func) value)
+        :else (func value))})
+
+;write a function that takes a "value", traverses it looking for mogrified maps, and rebuilds them using pairs-to-map/flatten/first/etc
+; starting from the bottom up
+
+(defn standard-demogrifier [type value]  
+    (case type
+      :map (pairs-to-map value)
+      :sequential value
+      :scalar value))
+
+(defn demogrify-value [value func]
+  (cond
+    (:__trans-type value)
+      (func (:__trans-type value) (demogrify-value (:__trans-value value) func))
+    (map? value)
+      (pairs-to-map (map #(demogrify-value % func) value))
+    (sequential? value)
+      (map #(demogrify-value % func) value)
+    :else 
+      value))
+
 
 (defn traverse-object [object func]
   (if (map? object)
@@ -62,7 +85,6 @@
     (if (vector? object)
       (map #(traverse-object % func) object)
       (func object))))
-
 
 
 (def expression-parser

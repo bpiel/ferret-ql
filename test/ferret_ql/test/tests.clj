@@ -14,6 +14,13 @@
 =>  {:__trans-type :scalar, :__trans-value 2})
 
 (fact
+"Test demogrify-value scalar"
+(query-engine/demogrify-value
+  {:__trans-type :scalar, :__trans-value 2}
+  query-engine/standard-demogrifier)
+=>  2)
+
+(fact
 "Test transmogrify-value map"
 (query-engine/transmogrify-value
   {1 10 3 15}
@@ -23,6 +30,18 @@
    :__trans-value '(
     [{:__trans-type :scalar, :__trans-value 2} {:__trans-type :scalar, :__trans-value 11}] 
     [{:__trans-type :scalar, :__trans-value 4} {:__trans-type :scalar, :__trans-value 16}])})
+
+(fact
+"Test demogrify-value map"
+(query-engine/demogrify-value  
+  {:__trans-type :map, 
+   :__trans-value '(
+    [{:__trans-type :scalar, :__trans-value 2} {:__trans-type :scalar, :__trans-value 11}] 
+    [{:__trans-type :scalar, :__trans-value 4} {:__trans-type :scalar, :__trans-value 16}])}
+  query-engine/standard-demogrifier)
+=> 
+  {2 11 4 16})
+
 
 (fact
 "Test transmogrify-value vector"
@@ -38,6 +57,23 @@
     {:__trans-type :scalar, :__trans-value 4} 
     {:__trans-type :scalar, :__trans-value 16})})
 
+(fact
+"Test demogrify-value vector"
+(query-engine/demogrify-value
+  
+  {:__trans-type :sequential, 
+   :__trans-value '(
+    {:__trans-type :scalar, :__trans-value 2} 
+    {:__trans-type :scalar, :__trans-value 11} 
+    {:__trans-type :scalar, :__trans-value 4} 
+    {:__trans-type :scalar, :__trans-value 16})}
+
+  query-engine/standard-demogrifier)
+=> 
+  [2 11 4 16])
+
+
+
 
 (fact
 "Test transmogrify-value map -- returns vector"
@@ -49,6 +85,32 @@
    :__trans-value '(
     [{:__trans-type :scalar, :__trans-value [1 2]} {:__trans-type :scalar, :__trans-value [10 11]}] 
     [{:__trans-type :scalar, :__trans-value [3 4]} {:__trans-type :scalar, :__trans-value [15 16]}])})
+
+
+(fact
+"Test transmogrify-value map -- returns complex"
+(query-engine/transmogrify-value
+  {1 10 3 15}
+  #(vector % (hash-map (+ % 1)(+ % 2))))
+=> 
+  {:__trans-type :map, :__trans-value '(
+    [{:__trans-type :scalar, :__trans-value [1 {2 3}]} {:__trans-type :scalar, :__trans-value [10 {11 12}]}] 
+    [{:__trans-type :scalar, :__trans-value [3 {4 5}]} {:__trans-type :scalar, :__trans-value [15 {16 17}]}])})
+
+(fact
+"Test transmogrify-value nested -- returns complex"
+(query-engine/transmogrify-value
+  {1 10 3 [1 22 333]}
+  #(vector % (hash-map (+ % 1)(+ % 2))))
+=> 
+  {:__trans-type :map, 
+   :__trans-value '(
+    [{:__trans-type :scalar, :__trans-value [1 {2 3}]} {:__trans-type :scalar, :__trans-value [10 {11 12}]}] 
+    [{:__trans-type :scalar, :__trans-value [3 {4 5}]} {:__trans-type :sequential, :__trans-value (
+      {:__trans-type :scalar, :__trans-value [1 {2 3}]} 
+      {:__trans-type :scalar, :__trans-value [22 {23 24}]} 
+      {:__trans-type :scalar, :__trans-value [333 {334 335}]})}])})
+
 
 
   (fact-skip
