@@ -83,10 +83,13 @@
     :else 
       value))
 
-(defn demogrify-value [value]
+(defn-dbg demogrify-value [value]
   (demogrify-value-rec value standard-demogrifier))
 
-(defn traverse-object [object func]
+(defn mogrify [value func]
+  (demogrify-value (transmogrify-value value func)))
+
+(defn traverse-object [object func] ;this may be dead
   (if (map? object)
     (pairs-to-map (map #(traverse-object % func) object))
     (if (vector? object)
@@ -161,7 +164,7 @@
 (defn eval-expr [expr group-context]
   (let [parsed-expr (parse-expr expr)]
     (if (= (get parsed-expr :type) :var)
-      (eval-expr-var (parse-expr expr) group-context)
+      (eval-expr-var parsed-expr group-context)
       expr)))
 
 
@@ -180,12 +183,12 @@
 
 
 (defn eval-select-value [select group-context]
-  (traverse-object select #(eval-expr % group-context)))
+  (mogrify select #(eval-expr % group-context)))
 
 
 (defn execute-select [query group-contexts]
   (map
-    #(first (eval-select-value (query "select") %))
+    #(eval-select-value (query "select") %)
     group-contexts))
 
 

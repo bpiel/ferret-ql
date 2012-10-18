@@ -159,10 +159,9 @@
 
 (fact
 "Test transmogrify and demogrify scalar -- with vectorizing"
-(query-engine/demogrify-value 
-  (query-engine/transmogrify-value
+  (query-engine/mogrify
   2
-  #(vector (+ % 1) %)))
+  #(vector (+ % 1) %))
 => 
   [3 2])
 
@@ -497,6 +496,21 @@
     [{"prop1" 11, "prop2" 222}
      {"prop1" 33, "prop2" 444}])
   => [[11 33]])
+
+  (fact
+  "test-query -- Test selects two properties from object - grouped"
+  (query-engine/test-query
+    {
+      "select"  ["{x.prop1}" "{x.prop2}"]
+      "for"   "x"
+      "in"    "_"
+      "group" 1
+    }
+    [{"prop1" 11, "prop2" 222}
+     {"prop1" 33, "prop2" 444}])
+  => [[11 222 33 444]])
+
+
 
 
   (fact
