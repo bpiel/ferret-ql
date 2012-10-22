@@ -588,6 +588,64 @@
   => [9 24])
 
 
+  (fact
+  "Test merge no group"
+  (query-engine/test-query
+    { "select" {"sum"   "(sum (merge {x.a}))"
+                "count" "(count (merge {x.a}))"}
+      "for"   "x"
+      "in"    "_"      
+    }
+
+    [{"a" [1 3 5]}
+     {"a" [2 2 4 4 12]}]
+
+    )
+  => [{"sum" 9, "count" 3} {"sum" 24, "count" 5}])
+
+  (fact
+  "Test merge group"
+  (query-engine/test-query
+    { "select" {"sum"   "(sum (merge {x.a}))"
+                "count" "(count (merge {x.a}))"}
+      "for"   "x"
+      "in"    "_"
+      "group" "1"
+    }
+
+    [{"a" [1 3 5]}
+     {"a" [2 2 4 4 12]}]
+
+    )
+  => [{"sum" 33, "count" 8}])
+
+
+  (fact
+  "Test merge group by variable"
+  (query-engine/test-query
+    { "select" {"sum"   "(sum (merge {x.a}))"
+                "count" "(count (merge {x.a}))"
+                "avg" "(avg (merge {x.a}))"
+                "max" "(max (merge {x.a}))"
+                "min" "(min (merge {x.a}))"
+                "first" "(first (merge {x.a}))"
+                "last" "(last (merge {x.a}))"
+
+              }
+      "for"   "x"
+      "in"    "_"
+      "group" "{x.b}"
+    }
+
+    [{"a" [1 3 5],      "b" 1}
+     {"a" [2 2 4 4 12], "b" 1}
+     {"a" [3],          "b" 2}
+     {"a" [2 10],       "b" 2}])
+
+  => [{"sum" 33, "count" 8, "avg" 4.125, "max" 12, "min" 1, "first" 1, "last" 12}
+      {"sum" 15, "count" 3, "avg" 5.0, "max" 10, "min" 2, "first" 3, "last" 10}])
+
+
 
 
 (comment
