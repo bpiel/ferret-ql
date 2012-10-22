@@ -529,12 +529,11 @@
       {"key" "22", "44" "66"}])
 
 
-(comment
   
   (fact
-  "Test count aggregate function"
+  "Test count aggregate function -- simple single group"
   (query-engine/test-query
-    { "select"  "(count $x)"
+    { "select"  "(count {x})"
       "for"   "x"
       "in"    "_"
       "group" "1"
@@ -545,7 +544,24 @@
     )
   => [4])
 
+  (fact
+  "Test count aggregate function"
+  (query-engine/test-query
+    { "select"  "(count {x.a})"
+      "for"   "x"
+      "in"    "_"      
+    }
 
+    [{"a" [1 3 5]}
+     {"a" [2 2 4 4 12]}]
+
+    )
+  => [3 5])
+
+
+
+
+(comment
 
 (fact
   "Test selects simple property correctly"

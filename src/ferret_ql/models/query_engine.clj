@@ -83,7 +83,7 @@
     :else 
       value))
 
-(defn-dbg demogrify-value [value]
+(defn demogrify-value [value]
   (demogrify-value-rec value standard-demogrifier))
 
 (defn mogrify [value func]
@@ -154,6 +154,12 @@
     #(eval-expr-var-single-context (:path var-expr) %)
     group-context))
 
+(defn eval-expr-func-call [func-call-expr args] 
+  (case (get func-call-expr :func)
+    "count" (count (first args)) 
+    func-call-expr))
+
+
 (defn eval-expr-single-context [expr context]
   (let [parsed-expr (parse-expr expr)]
     (if (= (get parsed-expr :type) :var)
@@ -161,12 +167,14 @@
       expr)))
 
 
-(defn eval-expr [expr group-context]
-  (let [parsed-expr (parse-expr expr)]
-    (if (= (get parsed-expr :type) :var)
-      (eval-expr-var parsed-expr group-context)
-      expr)))
+(defn eval-parsed-expr [parsed-expr group-context]  
+  (case (get parsed-expr :type) 
+    :var (eval-expr-var parsed-expr group-context)      
+    :func-call (eval-expr-func-call parsed-expr (map #(eval-parsed-expr % group-context) (:args parsed-expr)))
+    parsed-expr))
 
+(defn eval-expr [expr group-context]
+  (eval-parsed-expr (parse-expr expr) group-context))
 
 
 (defn get-for-contexts [query state]
