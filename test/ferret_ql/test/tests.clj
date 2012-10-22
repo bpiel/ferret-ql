@@ -547,7 +547,7 @@
   (fact
   "Test count aggregate function"
   (query-engine/test-query
-    { "select"  "(count {x.a})"
+    { "select"  "(a-count {x.a})"
       "for"   "x"
       "in"    "_"      
     }
