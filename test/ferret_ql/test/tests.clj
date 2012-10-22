@@ -558,6 +558,35 @@
     )
   => [3 5])
 
+  
+  (fact
+  "Test sum aggregate function -- simple single group"
+  (query-engine/test-query
+    { "select"  "(sum {x})"
+      "for"   "x"
+      "in"    "_"
+      "group" "1"
+    }
+
+    [2, 3, 4, 5]
+
+    )
+  => [14])
+
+  (fact
+  "Test sum aggregate function"
+  (query-engine/test-query
+    { "select"  "(a-sum {x.a})"
+      "for"   "x"
+      "in"    "_"      
+    }
+
+    [{"a" [1 3 5]}
+     {"a" [2 2 4 4 12]}]
+
+    )
+  => [9 24])
+
 
 
 

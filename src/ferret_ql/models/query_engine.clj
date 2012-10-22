@@ -101,7 +101,7 @@
   (parsley/parser ;add constants
     :expr #{:var :func-call}
     :func-call ["(" :func :expr* ")"]
-    :func #{"count" "a-count" "avg" "median" "sum" "min" "max" "first" "last" "second" "rest" "sort" "+" "-" "/" "*" "%"}
+    :func #{"count" "a-count" "avg" "median" "sum" "a-sum" "min" "max" "first" "last" "second" "rest" "sort" "+" "-" "/" "*" "%"}
     :var ["{" :word ["." :word] :* "}"]    
     :word #"\w*"))
 
@@ -158,6 +158,9 @@
   (case (get func-call-expr :func)
     "count" (count (first args)) 
     "a-count" (count (first (first args))) 
+    "sum" (reduce + (first args))
+    "a-sum" (reduce + (first (first args)))
+
     func-call-expr))
 
 
