@@ -160,7 +160,7 @@
     "a-count" (count (first (first args))) 
     "sum" (reduce + (first args))
     "a-sum" (reduce + (first (first args)))
-    "merge" (flatten (first args)) ;too deep?
+    "merge" (flatten args) ;too deep?
     "avg" (double (/ (reduce + (first args)) (count (first args))))
     "max" (apply max (first args))
     "min" (apply min (first args))

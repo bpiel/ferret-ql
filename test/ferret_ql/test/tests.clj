@@ -426,7 +426,7 @@
   (fact
     "test-query -- Test confusing idea #2"
     (query-engine/test-query
-    { "select"  {"aa" ["{x.prop1}" "{x.prop2}"]}
+    { "select"  {"aa" "(merge {x.prop1} {x.prop2})"}
       "for"   "x"
       "in"    "_"
       "group" "1" }
@@ -434,13 +434,13 @@
     [{"prop1" "11", "prop2" "222"}
      {"prop1" "33", "prop2" "444"}])
 
-  => [{ "aa" ["11" "222" "33" "444"]}])
+  => [{ "aa" ["11" "33" "222" "444"]}])
 
 
   (fact
     "test-query -- Test confusing ideas together"
     (query-engine/test-query
-    { "select"  {"array"      ["{x.prop1}" "{x.prop2}"]
+    { "select"  {"array"      "(merge {x.prop1} {x.prop2})"
                  "keys"       {"{x.prop1}" "{x.prop2}"}
                  "aggregate"  "(sum {x.prop1})"}
       "for"   "x"
@@ -451,9 +451,9 @@
      {"prop1" 33, "prop2" 444}]
 
     )
-  => [{ "array"     [11 222 33 444] 
-        11          222
-        33          444
+  => [{ "array"     [11 33 222 444] 
+        "keys"      {11          222
+                     33          444}
         "aggregate" 44}])
 
   
@@ -468,7 +468,7 @@
 
     [{"prop1" 11, "prop2" 222}
      {"prop1" 33, "prop2" 444}])
-  => [11 33])
+  => [[11] [33]])
 
   
   (fact
@@ -482,13 +482,13 @@
     }
     [{"prop1" 11, "prop2" 222}
      {"prop1" 33, "prop2" 444}])
-  => [11])
+  => [[11 33]])
 
   (fact
-  "test-query -- Test selects single property from object - grouped"
+  "test-query -- Test selects and merges single property from object - grouped"
   (query-engine/test-query
     {
-      "select"  ["{x.prop1}"]
+      "select"  "(merge {x.prop1})"
       "for"   "x"
       "in"    "_"
       "group" 1
@@ -498,7 +498,37 @@
   => [[11 33]])
 
   (fact
-  "test-query -- Test selects two properties from object - grouped"
+  "test-query -- Test selects single property as arrays from object - grouped"
+  (query-engine/test-query
+    {
+      "select"  ["{x.prop1}"]
+      "for"   "x"
+      "in"    "_"
+      "group" 1
+    }
+    [{"prop1" 11, "prop2" 222}
+     {"prop1" 33, "prop2" 444}])
+  => [[[11] [33]]])
+
+
+
+  (fact
+  "test-query -- Test selects and merges two properties from object - grouped"
+  (query-engine/test-query
+    {
+      "select"  "(merge {x.prop1} {x.prop2})"
+      "for"   "x"
+      "in"    "_"
+      "group" 1
+    }
+    [{"prop1" 11, "prop2" 222}
+     {"prop1" 33, "prop2" 444}])
+  => [[11 33 222 444]])
+
+
+
+  (fact
+  "test-query -- Test selects two properties as arrays from object - grouped"
   (query-engine/test-query
     {
       "select"  ["{x.prop1}" "{x.prop2}"]
@@ -508,7 +538,7 @@
     }
     [{"prop1" 11, "prop2" 222}
      {"prop1" 33, "prop2" 444}])
-  => [[11 222 33 444]])
+  => [[[11 222] [33 444]]])
 
 
 
@@ -644,6 +674,28 @@
 
   => [{"sum" 33, "count" 8, "avg" 4.125, "max" 12, "min" 1, "first" 1, "last" 12}
       {"sum" 15, "count" 3, "avg" 5.0, "max" 10, "min" 2, "first" 3, "last" 10}])
+
+
+  (fact
+  "Test complex group index"
+  (query-engine/test-query
+    { "select" {"sum"   "(sum (merge {x.a}))"
+                "count" "(count (merge {x.a}))"
+              }
+      "for"   "x"
+      "in"    "_"
+      "group" ["{x.b}" "{x.c}"]
+    }
+
+    [{"a" [1 2],  "b" 1 "c" 1}
+     {"a" [3],    "b" 1 "c" 1}
+     {"a" [4 5],  "b" 2 "c" 1}
+     {"a" [6],    "b" 2 "c" 2}])
+
+  => [{"sum" 6, "count" 3}
+      {"sum" 9, "count" 2}
+      {"sum" 6, "count" 1}
+      ])
 
 
 
