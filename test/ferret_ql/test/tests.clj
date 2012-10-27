@@ -655,6 +655,7 @@
   (query-engine/test-query
     { "select" {"sum"   "(sum (merge {x.a}))"
                 "count" "(count (merge {x.a}))"
+                "distinct" "(count (distinct (merge {x.a})))"
                 "avg" "(avg (merge {x.a}))"
                 "max" "(max (merge {x.a}))"
                 "min" "(min (merge {x.a}))"
@@ -672,8 +673,8 @@
      {"a" [3],          "b" 2}
      {"a" [2 10],       "b" 2}])
 
-  => [{"sum" 33, "count" 8, "avg" 4.125, "max" 12, "min" 1, "first" 1, "last" 12}
-      {"sum" 15, "count" 3, "avg" 5.0, "max" 10, "min" 2, "first" 3, "last" 10}])
+  => [{"sum" 33, "count" 8, "distinct" 6, "avg" 4.125, "max" 12, "min" 1, "first" 1, "last" 12}
+      {"sum" 15, "count" 3, "distinct" 3, "avg" 5.0, "max" 10, "min" 2, "first" 3, "last" 10}])
 
 
   (fact

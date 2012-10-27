@@ -101,7 +101,7 @@
   (parsley/parser ;add constants
     :expr #{:var :func-call}
     :func-call ["(" :func :expr* ")"]
-    :func #{"merge" "count" "a-count" "avg" "median" "sum" "a-sum" "min" "max" "first" "last" "second" "rest" "sort" "+" "-" "/" "*" "%"}
+    :func #{"merge" "count" "a-count" "avg" "median" "sum" "a-sum" "min" "max" "distinct" "first" "last" "second" "rest" "sort" "+" "-" "/" "*" "%"}
     :var ["{" :word ["." :word] :* "}"]    
     :word #"\w*"))
 
@@ -164,6 +164,7 @@
     "avg" (double (/ (reduce + (first args)) (count (first args))))
     "max" (apply max (first args))
     "min" (apply min (first args))
+    "distinct" (distinct (first args))
     "first" (first (first args))
     "last" (last (first args))
 
