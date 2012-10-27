@@ -677,10 +677,11 @@
 
 
   (fact
-  "Test complex group index"
+  "Test vector group index"
   (query-engine/test-query
     { "select" {"sum"   "(sum (merge {x.a}))"
                 "count" "(count (merge {x.a}))"
+                "b"     "(first {x.b})"
               }
       "for"   "x"
       "in"    "_"
@@ -692,10 +693,9 @@
      {"a" [4 5],  "b" 2 "c" 1}
      {"a" [6],    "b" 2 "c" 2}])
 
-  => [{"sum" 6, "count" 3}
-      {"sum" 9, "count" 2}
-      {"sum" 6, "count" 1}
-      ])
+  => [{"sum" 6, "count" 3, "b" 1}
+      {"sum" 9, "count" 2, "b" 2}
+      {"sum" 6, "count" 1, "b" 2}])
 
 
 

@@ -195,9 +195,10 @@
 
 
 (defn group-contexts [query contexts]
-  (let [contexts (map-indexed #(assoc %2 "_index_" %) contexts)]
+  (let [contexts (map-indexed #(assoc %2 "_index_" %) contexts)
+        make-eval-fn (fn [group-context] #(eval-expr % [group-context]))]
     (map second (group-by
-      #(eval-expr-single-context (query "group") %)
+      #(mogrify (query "group") (make-eval-fn %))
       contexts))))
 
 
