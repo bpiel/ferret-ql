@@ -1,5 +1,6 @@
 (ns ferret-ql.models.query-engine  
-  (:require [net.cgrand.parsley :as parsley]))
+  (:require [net.cgrand.parsley :as parsley]
+            [cheshire.core :refer :all]))
 
 ;contexts
 ;process
@@ -218,6 +219,9 @@
     (execute-select query (group-contexts query (get-for-contexts query state)))))
 
 
-(defn test-query [query input]
+(defn test-squery [query input]
   (let [state {"_" input }]
 		(execute-query query state)))
+
+(defn test-query [query input]
+  (generate-string (test-squery (parse-string query) (parse-string input))))

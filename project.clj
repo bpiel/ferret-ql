@@ -4,7 +4,7 @@
             :warn-on-reflection false
             :ring {:handler job-queue.server/server-handler}
             :dependencies [[org.clojure/clojure "1.4.0"]
-                           [cheshire "4.0.0"]
+                           [cheshire "4.0.3"]
                            [noir "1.3.0-beta8"]
                            [log4j "1.2.17" :exclusions
                              [javax.mail/mail

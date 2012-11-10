@@ -410,8 +410,8 @@
  
 
 (fact
-    "***test-query -- Test confusing idea #1"
-    (query-engine/test-query
+    "***test-squery -- Test confusing idea #1"
+    (query-engine/test-squery
     { "select"  {"{x.prop1}" "{x.prop2}"}
       "for"   "x"
       "in"    "_"
@@ -424,8 +424,8 @@
        "k33" "v444"}])
 
   (fact
-    "test-query -- Test confusing idea #2"
-    (query-engine/test-query
+    "test-squery -- Test confusing idea #2"
+    (query-engine/test-squery
     { "select"  {"aa" "(merge {x.prop1} {x.prop2})"}
       "for"   "x"
       "in"    "_"
@@ -438,8 +438,8 @@
 
 
   (fact
-    "test-query -- Test confusing ideas together"
-    (query-engine/test-query
+    "test-squery -- Test confusing ideas together"
+    (query-engine/test-squery
     { "select"  {"array"      "(merge {x.prop1} {x.prop2})"
                  "keys"       {"{x.prop1}" "{x.prop2}"}
                  "aggregate"  "(sum {x.prop1})"}
@@ -458,8 +458,8 @@
 
   
   (fact
-  "test-query -- Test selects single property from object"
-  (query-engine/test-query
+  "test-squery -- Test selects single property from object"
+  (query-engine/test-squery
     {
       "select"  "{x.prop1}"
       "for"   "x"
@@ -472,8 +472,8 @@
 
   
   (fact
-  "test-query -- Test selects single property from object - aggregated group w/o function?"
-  (query-engine/test-query
+  "test-squery -- Test selects single property from object - aggregated group w/o function?"
+  (query-engine/test-squery
     {
       "select"  "{x.prop1}"
       "for"   "x"
@@ -485,8 +485,8 @@
   => [[11 33]])
 
   (fact
-  "test-query -- Test selects and merges single property from object - grouped"
-  (query-engine/test-query
+  "test-squery -- Test selects and merges single property from object - grouped"
+  (query-engine/test-squery
     {
       "select"  "(merge {x.prop1})"
       "for"   "x"
@@ -498,8 +498,8 @@
   => [[11 33]])
 
   (fact
-  "test-query -- Test selects single property as arrays from object - grouped"
-  (query-engine/test-query
+  "test-squery -- Test selects single property as arrays from object - grouped"
+  (query-engine/test-squery
     {
       "select"  ["{x.prop1}"]
       "for"   "x"
@@ -513,8 +513,8 @@
 
 
   (fact
-  "test-query -- Test selects and merges two properties from object - grouped"
-  (query-engine/test-query
+  "test-squery -- Test selects and merges two properties from object - grouped"
+  (query-engine/test-squery
     {
       "select"  "(merge {x.prop1} {x.prop2})"
       "for"   "x"
@@ -528,8 +528,8 @@
 
 
   (fact
-  "test-query -- Test selects two properties as arrays from object - grouped"
-  (query-engine/test-query
+  "test-squery -- Test selects two properties as arrays from object - grouped"
+  (query-engine/test-squery
     {
       "select"  ["{x.prop1}" "{x.prop2}"]
       "for"   "x"
@@ -544,8 +544,8 @@
 
 
   (fact
-  "test-query -- Test selects multiple properties from nested objects in array"
-  (query-engine/test-query
+  "test-squery -- Test selects multiple properties from nested objects in array"
+  (query-engine/test-squery
     { "select"  { "key" "{x.prop1}", "{x.prop2.key1}" "{x.prop2.prop3}" }
       "for"   "x"
       "in"    "_"}
@@ -562,7 +562,7 @@
   
   (fact
   "Test count aggregate function -- simple single group"
-  (query-engine/test-query
+  (query-engine/test-squery
     { "select"  "(count {x})"
       "for"   "x"
       "in"    "_"
@@ -576,7 +576,7 @@
 
   (fact
   "Test count aggregate function"
-  (query-engine/test-query
+  (query-engine/test-squery
     { "select"  "(a-count {x.a})"
       "for"   "x"
       "in"    "_"      
@@ -591,7 +591,7 @@
   
   (fact
   "Test sum aggregate function -- simple single group"
-  (query-engine/test-query
+  (query-engine/test-squery
     { "select"  "(sum {x})"
       "for"   "x"
       "in"    "_"
@@ -605,7 +605,7 @@
 
   (fact
   "Test sum aggregate function"
-  (query-engine/test-query
+  (query-engine/test-squery
     { "select"  "(a-sum {x.a})"
       "for"   "x"
       "in"    "_"      
@@ -620,7 +620,7 @@
 
   (fact
   "Test merge no group"
-  (query-engine/test-query
+  (query-engine/test-squery
     { "select" {"sum"   "(sum (merge {x.a}))"
                 "count" "(count (merge {x.a}))"}
       "for"   "x"
@@ -635,7 +635,7 @@
 
   (fact
   "Test merge group"
-  (query-engine/test-query
+  (query-engine/test-squery
     { "select" {"sum"   "(sum (merge {x.a}))"
                 "count" "(count (merge {x.a}))"}
       "for"   "x"
@@ -652,7 +652,7 @@
 
   (fact
   "Test merge group by variable"
-  (query-engine/test-query
+  (query-engine/test-squery
     { "select" {"sum"   "(sum (merge {x.a}))"
                 "count" "(count (merge {x.a}))"
                 "distinct" "(count (distinct (merge {x.a})))"
@@ -679,7 +679,7 @@
 
   (fact
   "Test vector group index"
-  (query-engine/test-query
+  (query-engine/test-squery
     { "select" {"sum"   "(sum (merge {x.a}))"
                 "count" "(count (merge {x.a}))"
                 "b"     "(first {x.b})"
@@ -698,6 +698,25 @@
       {"sum" 9, "count" 2, "b" 2}
       {"sum" 6, "count" 1, "b" 2}])
 
+  (fact
+  "Test JSON query"
+  (query-engine/test-query
+    "{ \"select\": {\"sum\" : \"(sum (merge {x.a}))\",
+                  \"count\" : \"(count (merge {x.a}))\",
+                  \"b\":     \"(first {x.b})\"
+              },
+      \"for\" : \"x\",
+      \"in\" :  \"_\",
+      \"group\"  : [\"{x.b}\", \"{x.c}\"]
+    }"
+
+    "[{\"a\": [1, 2],  \"b\": 1, \"c\": 1},
+      {\"a\": [3],    \"b\": 1, \"c\": 1},
+      {\"a\": [4, 5],  \"b\": 2, \"c\": 1},
+      {\"a\": [6],    \"b\": 2, \"c\": 2}]")
+
+  =>  "[{\"b\":1,\"sum\":6,\"count\":3},{\"b\":2,\"sum\":9,\"count\":2},{\"b\":2,\"sum\":6,\"count\":1}]")
+
 
 
 
@@ -705,7 +724,7 @@
 
 (fact
   "Test selects simple property correctly"
-  (query-engine/test-query
+  (query-engine/test-squery
     {"select" "{prop1}"}
     {"prop1" 22, "prop2" 34})
   => 22)
