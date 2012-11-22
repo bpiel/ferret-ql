@@ -6,4 +6,4 @@
 (set-page! 404 "Page not found")
 
 (defpage testget "/testget/:id" {:keys [id]}
-  (resp/json '(:test id)))
+  (resp/json [:test id]))
