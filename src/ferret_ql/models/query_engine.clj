@@ -35,9 +35,6 @@
           first-coll
           (predicate first-coll))))))
 
-(defn pairs-to-map-OLD [pairs]
-  (apply hash-map (mapcat identity pairs)))
-
 (defn pairs-to-map [pairs]
   (apply 
     hash-map 
@@ -89,14 +86,6 @@
 
 (defn mogrify [value func]
   (demogrify-value (transmogrify-value value func)))
-
-(defn traverse-object [object func] ;this may be dead
-  (if (map? object)
-    (pairs-to-map (map #(traverse-object % func) object))
-    (if (vector? object)
-      (map #(traverse-object % func) object)
-      (func object))))
-
 
 (def expression-parser
   (parsley/parser ;add constants
@@ -171,14 +160,6 @@
 
 
     [:not-found func-call-expr]))
-
-
-(defn eval-expr-single-context [expr context]
-  (let [parsed-expr (parse-expr expr)]
-    (if (= (get parsed-expr :type) :var)
-      (eval-expr-var-single-context (:path (parse-expr expr)) context)
-      expr)))
-
 
 (defn eval-parsed-expr [parsed-expr group-context]  
   (case (get parsed-expr :type) 
