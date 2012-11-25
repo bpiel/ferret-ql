@@ -178,28 +178,6 @@
    3 [1 22 333]})
 
 
-
-
-  (fact
-  "Test recursive object traversal"
-  (query-engine/traverse-object 
-    { 1 2
-      3 {4 5}
-      6 [7 8 [9 1 {2 3}]]}
-    #(+ % 1))
-=> {  2 3
-      4 {5 6}
-      7 [8 9 [10 2 {3 4}]]})
-
-  (fact
-  "Test object traversal with key pairs"
-  (query-engine/traverse-object 
-    {1 10}
-    #(vector % (+ % 1)))
-=> {1 10, 2 11})
-
-
-
   (fact
     "Test parsley expression parser"
     (query-engine/parse-expr-into-parsley-Node "{x}")

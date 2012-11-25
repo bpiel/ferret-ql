@@ -1,8 +1,7 @@
 (ns ferret-ql.test.api-tests
   (:require [midje.sweet :refer :all]
             [noir.core :refer :all]
-            [noir.util.test :refer :all]
-            [ferret-ql.views.ferret-ql-api  :refer :all]))
+            [noir.util.test :refer :all]))
 
 (fact
  "Test testget"
