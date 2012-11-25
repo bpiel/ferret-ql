@@ -2,7 +2,7 @@
             :description "General nested object query language"
             :repositories {"stuart" "http://stuartsierra.com/maven2"}
             :warn-on-reflection false
-            :ring {:handler job-queue.server/server-handler}
+            :ring {:handler ferret-ql.server/server-handler}
             :dependencies [[org.clojure/clojure "1.4.0"]
                            [cheshire "4.0.3"]
                            [noir "1.3.0-beta8"]
