@@ -1,6 +1,8 @@
 (ns ferret-ql.models.query-engine  
   (:require [net.cgrand.parsley :as parsley]
-            [cheshire.core :refer :all]))
+            [cheshire.core :refer :all]
+            [clojure.pprint :refer :all]
+            ))
 
 ;contexts
 ;process
@@ -15,13 +17,16 @@
 
 (defmacro defn-dbg [name args body]
   `(def ~name (fn ~args 
-    (let [inputs# ~args]
-      (do 
-        (print "*" '~name "\ninputs :" inputs# "\n")
-        (let [output# ~body]
-          (do 
-            (print "output :" output# "\n\n")
-            output#)))))))
+    (let [inputs# ~args
+          output# ~body]
+      (do                
+          (print "*" '~name "\ninputs :\n")
+          (pprint inputs#)
+          (print "\n")
+          (print "output :\n")
+          (pprint output#)
+          (print "\n\n")
+          output#)))))
 
 (defn find-first-and-rest [predicate coll]
   (loop [rest-coll coll
@@ -35,7 +40,7 @@
           first-coll
           (predicate first-coll))))))
 
-(defn pairs-to-map [pairs]
+(defn pairs-to-mapOLD [pairs]
   (apply 
     hash-map 
     (mapcat 
@@ -43,6 +48,15 @@
           (interleave (first %) (second %)) ;make recursive?
           %)
       pairs)))
+
+(defn pairs-to-map [pairs]
+     (apply
+       hash-map
+       (let [to-seq #(if (sequential? %) % (vector %))]
+         (mapcat
+           #(interleave (to-seq (first %)) (to-seq (second %)))
+           pairs))))
+
 
 (defn transpose [m]
   (vec (apply map vector m)))
@@ -55,7 +69,7 @@
       :else :scalar)
    :__trans-value
      (cond 
-        (map? value) (map #(vector (transmogrify-value (first %) func) (transmogrify-value (second %) func)) value)
+        (map? value) (doall (map #(vector (transmogrify-value (first %) func) (transmogrify-value (second %) func)) value)) ;DEBUG forces nonlazy eval w/ doall
         (sequential? value) (map #(transmogrify-value % func) value)
         :else (func value))})
 
@@ -70,14 +84,14 @@
                     value)
       :scalar value))
 
-(defn demogrify-value-rec [value func]
+(defn-dbg demogrify-value-rec [value func]
   (cond
     (:__trans-type value)
       (func (:__trans-type value) (demogrify-value-rec (:__trans-value value) func))
     (map? value)
-      (pairs-to-map (map #(demogrify-value-rec % func) value))
+      (pairs-to-map (doall (map #(demogrify-value-rec % func) value))) ;DEBUG doall
     (sequential? value)
-      (map #(demogrify-value-rec % func) value)
+      (doall (map #(demogrify-value-rec % func) value)) ;DEBUG doall
     :else 
       value))
 
